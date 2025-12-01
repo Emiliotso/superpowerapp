@@ -218,6 +218,13 @@ def add_invite_view(request):
         return redirect('dashboard')
     return render(request, 'invite.html')
 
+@login_required
+def delete_invite_view(request, uuid):
+    survey = get_object_or_404(Survey, uuid=uuid, user=request.user)
+    if request.method == 'POST':
+        survey.delete()
+    return redirect('dashboard')
+
 def signup_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
