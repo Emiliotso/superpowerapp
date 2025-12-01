@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Your Superpower Profile</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #111827;
+            color: #f3f4f6;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* The AI Card */
+        .card {
+            background: #1f2937;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            border: 1px solid #374151;
+        }
+
+        h1 {
+            color: #60a5fa;
+            margin-top: 0;
+            text-align: center;
+        }
+
+        h2 {
+            color: #9ca3af;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid #374151;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+
+        /* This makes the AI text look like a document, not one big blob */
+        .ai-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #60a5fa;
+            border: 1px solid #60a5fa;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background: #60a5fa;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>The Mirror</h1>
+            <p style="text-align: center; color: #9ca3af;">AI Synthesis of your friends' feedback</p>
+
+            <h2>Your Superpower Analysis</h2>
+            <div class="ai-content">
+                {{ survey.ai_summary }}
+            </div>
+
+            <a href="/feedback/{{ survey.uuid }}" class="btn">Share Link Again</a>
+        </div>
+    </div>
+</body>
+
+</html>

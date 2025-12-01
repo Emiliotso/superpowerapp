@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Leadership Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f3f4f6;
+            padding: 40px;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: #111827;
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .logout {
+            color: #6b7280;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .logout:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        /* Profile Section */
+        .profile-section {
+            margin-bottom: 50px;
+        }
+
+        .reveal-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .reveal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        }
+
+        .report-container {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .report-content {
+            padding: 40px;
+        }
+
+        .report-content h2 {
+            color: #111827;
+            margin-top: 0;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .ai-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #374151;
+            white-space: pre-wrap;
+        }
+
+        .refresh-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .refresh-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Chat Section */
+        .chat-container {
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+            padding: 30px;
+        }
+
+        .chat-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 15px;
+        }
+
+        .chat-window {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            padding: 10px 15px;
+            border-radius: 8px;
+            max-width: 80%;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: #eff6ff;
+            color: #1e40af;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-family: inherit;
+        }
+
+        .chat-send {
+            padding: 12px 24px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .chat-send:hover {
+            background: #1d4ed8;
+        }
+
+        .chat-send:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* Invitations Section */
+        h2.section-title {
+            color: #111827;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .invite-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            background: white;
+            color: #4b5563;
+            padding: 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            border: 2px dashed #e5e7eb;
+            transition: all 0.2s;
+        }
+
+        .invite-btn:hover {
+            border-color: #d1d5db;
+            background: #f9fafb;
+            color: #111827;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .card {
+            padding: 20px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #e5e7eb;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .card.pending {
+            border-left-color: #fca5a5;
+        }
+
+        /* Soft Red */
+        .card.completed {
+            border-left-color: #34d399;
+        }
+
+        /* Soft Green */
+
+        .card h3 {
+            margin: 0 0 5px 0;
+            color: #111827;
+            font-size: 1.1rem;
+        }
+
+        .card p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            margin-top: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .pending .status-badge {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .completed .status-badge {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Leadership Dashboard</h1>
+            <a href="{% url 'logout' %}" class="logout">Sign Out</a>
+        </div>
+
+        <!-- PROFILE SECTION -->
+        <div class="profile-section">
+            <button id="revealBtn" class="reveal-btn">View My Leadership Profile</button>
+
+            <div id="reportContainer" class="report-container">
+                <div class="report-content">
+                    <h2>Your Leadership Profile</h2>
+                    {% if profile.ai_summary %}
+                    <div class="ai-text">{{ profile.ai_summary }}</div>
+                    <p
+                        style="color: #9ca3af; font-size: 0.8rem; margin-top: 30px; border-top: 1px solid #f3f4f6; padding-top: 10px;">
+                        Last updated: {{ profile.last_updated }} •
+                        <a href="{% url 'profile_analysis' %}" class="refresh-link">Refresh Analysis</a>
+                    </p>
+                    {% else %}
+                    <p>No analysis generated yet. Collect feedback and click "Refresh Analysis" to build your profile.
+                    </p>
+                    <a href="{% url 'profile_analysis' %}" class="refresh-link">Generate First Profile</a>
+                    {% endif %}
+                </div>
+
+                <!-- CHAT INTERFACE -->
+                {% if profile.ai_summary %}
+                <div class="chat-container">
+                    <div class="chat-title">Ask your Confidential Coach</div>
+                    <div id="chatWindow" class="chat-window">
+                        <div class="message ai">Hello! I've analyzed your feedback. I can help you dig deeper into
+                            specific areas or clarify any points. Everything is confidential. What would you like to
+                            know?</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" class="chat-input"
+                            placeholder="e.g., What is my biggest blind spot?" onkeypress="handleEnter(event)">
+                        <button id="sendBtn" class="chat-send" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- INVITATIONS SECTION -->
+        <h2 class="section-title">Feedback Invitations</h2>
+        <a href="{% url 'add_invite' %}" class="invite-btn">+ Send New Invitation</a>
+
+        <div class="card-grid">
+            {% for survey in surveys %}
+            <div class="card {% if survey.is_completed %}completed{% else %}pending{% endif %}">
+                <h3>{{ survey.respondent_name }}</h3>
+                <p>{{ survey.respondent_email }}</p>
+                <div class="status-badge">
+                    {% if survey.is_completed %}Completed{% else %}Pending{% endif %}
+                </div>
+                <p style="margin-top: 10px; font-size: 0.8rem; color: #9ca3af;">{{ survey.created_at|date:"M d" }}</p>
+            </div>
+            {% empty %}
+            <p style="color: #6b7280; grid-column: 1/-1; text-align: center; padding: 40px;">No invitations sent yet.
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        // Toggle Report Visibility
+        const revealBtn = document.getElementById('revealBtn');
+        const reportContainer = document.getElementById('reportContainer');
+
+        revealBtn.addEventListener('click', () => {
+            if (reportContainer.style.display === 'block') {
+                reportContainer.style.display = 'none';
+                revealBtn.textContent = 'View My Leadership Profile';
+            } else {
+                reportContainer.style.display = 'block';
+                revealBtn.textContent = 'Hide Profile';
+            }
+        });
+
+        // Chat Logic
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const window = document.getElementById('chatWindow');
+            const btn = document.getElementById('sendBtn');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // Add User Message
+            appendMessage(message, 'user');
+            input.value = '';
+            input.disabled = true;
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('{% url "chat_view" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+
+                if (data.reply) {
+                    appendMessage(data.reply, 'ai');
+                } else {
+                    appendMessage("Sorry, I encountered an error.", 'ai');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                appendMessage("Sorry, something went wrong.", 'ai');
+            } finally {
+                input.disabled = false;
+                btn.disabled = false;
+                input.focus();
+            }
+        }
+
+        function appendMessage(text, sender) {
+            const window = document.getElementById('chatWindow');
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+            div.textContent = text;
+            window.appendChild(div);
+            window.scrollTop = window.scrollHeight;
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+    </script>
+</body>
+
+</html>

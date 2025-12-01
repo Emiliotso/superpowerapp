@@ -1,0 +1,9 @@
+django
+stripe
+openai
+python-dotenv
+google-generativeai
+gunicorn
+whitenoise
+dj-database-url
+psycopg2-binary

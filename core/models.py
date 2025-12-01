@@ -1,0 +1,55 @@
+from django.db import models
+from django.conf import settings
+import uuid
+
+class Survey(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='surveys')
+    
+    # Respondent Info
+    respondent_name = models.CharField(max_length=255)
+    respondent_email = models.EmailField()
+    respondent_phone = models.CharField(max_length=50, blank=True)
+    
+    # Status
+    is_completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # Answers
+    relationship_context = models.TextField(blank=True, verbose_name="How do you know them?")
+    foxhole_answer = models.TextField(blank=True, verbose_name="Describe a situation where they were at their best. Why would you want them by your side in a crisis?")
+    magic_answer = models.TextField(blank=True, verbose_name="If you could magically grant them one improvement to help them grow, what would it be?")
+    shadow_answer = models.TextField(blank=True, verbose_name="What specific behaviors emerge when they are stressed, tired, or under pressure?")
+
+    def __str__(self):
+        return f"Invite to {self.respondent_name} ({self.user.username})"
+
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
+    ai_summary = models.TextField(blank=True, null=True)
+    last_updated = models.DateTimeField(auto_now=True)
+    
+    # Onboarding / User Context
+    onboarding_completed = models.BooleanField(default=False)
+    current_role = models.CharField(max_length=255, blank=True)
+    responsibilities = models.TextField(blank=True)
+    career_goal = models.TextField(blank=True)
+    family_context = models.TextField(blank=True)
+    core_values = models.TextField(blank=True)
+    stress_response = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"Profile for {self.user.username}"
+
+# Signal to create Profile automatically when User is created
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

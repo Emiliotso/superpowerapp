@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Feedback for {{ survey.user.username }}</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f4f4f9;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        p.intro {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-family: sans-serif;
+            min-height: 100px;
+        }
+
+        textarea:focus {
+            border-color: #2563eb;
+            outline: none;
+        }
+
+        button {
+            margin-top: 30px;
+            width: 100%;
+            padding: 15px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Feedback for {{ survey.user.username }}</h1>
+        <p class="intro">Hi {{ survey.respondent_name }},<br>
+            {{ survey.user.username }} values your perspective. Please answer these three questions honestly to help
+            them grow.</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <label>Briefly describe how you know {{ survey.user.username }}</label>
+            <textarea name="relationship" required placeholder="e.g. We worked together at..."></textarea>
+
+            <label>1. Describe a situation where they were at their best. Why would you want them by your side in a
+                crisis?</label>
+            <textarea name="foxhole" required placeholder="They showed incredible resilience when..."></textarea>
+
+            <label>2. If you could magically grant them one improvement to help them grow, what would it be?</label>
+            <textarea name="magic" required placeholder="I wish they would..."></textarea>
+
+            <label>3. What specific behaviors emerge when they are stressed, tired, or under pressure?</label>
+            <textarea name="shadow" required placeholder="They tend to..."></textarea>
+
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </div>
+</body>
+
+</html>

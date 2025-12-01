@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Welcome to Superpower</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f3f4f6;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #111827;
+            text-align: center;
+        }
+
+        p.intro {
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        textarea {
+            min-height: 80px;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #2563eb;
+            outline: none;
+            box-shadow: 0 0 0 2px #bfdbfe;
+        }
+
+        button {
+            margin-top: 30px;
+            width: 100%;
+            padding: 15px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Welcome! Let's get to know you.</h1>
+        <p class="intro">To help your AI coach provide the best advice, please tell us a bit about your professional and
+            personal context.</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <label>1. Current Role & Industry</label>
+            <input type="text" name="role" required placeholder="e.g. VP of Engineering in Fintech">
+
+            <label>2. Key Responsibilities</label>
+            <textarea name="responsibilities" required
+                placeholder="Leading a team of 20, managing technical strategy..."></textarea>
+
+            <label>3. Primary Career Goal (Next 12 Months)</label>
+            <textarea name="goal" required placeholder="Transition to CTO, launch a new product..."></textarea>
+
+            <label>4. Family/Personal Context</label>
+            <textarea name="family" required placeholder="Married with 2 kids, enjoy hiking..."></textarea>
+
+            <label>5. Top 3 Core Values</label>
+            <input type="text" name="values" required placeholder="Integrity, Innovation, Empathy">
+
+            <label>6. How do you typically react under pressure?</label>
+            <textarea name="stress" required placeholder="I tend to withdraw / I get micromanagy..."></textarea>
+
+            <button type="submit">Complete Profile</button>
+        </form>
+    </div>
+</body>
+
+</html>
