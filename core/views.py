@@ -206,7 +206,7 @@ def add_invite_view(request):
             send_mail(
                 subject=f"Feedback Request from {request.user.username}",
                 message=f"Hi {name},\n\n{request.user.username} would value your feedback.\n\nPlease click here: {link}",
-                from_email="noreply@superpower.app",
+                from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[email],
                 fail_silently=False,
             )
