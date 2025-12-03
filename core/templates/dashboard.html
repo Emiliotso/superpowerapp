@@ -331,6 +331,44 @@
                 </div>
                 {% endif %}
             </div>
+
+            <!-- RAW DATA VERIFICATION -->
+            <details
+                style="margin-top: 20px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <summary style="cursor: pointer; font-weight: 600; color: #4b5563;">View My Onboarding Responses
+                </summary>
+                <div style="margin-top: 20px; display: grid; gap: 15px;">
+                    <div>
+                        <strong style="display: block; color: #111827; margin-bottom: 4px;">Current Role</strong>
+                        <div style="color: #4b5563;">{{ profile.current_role }}</div>
+                    </div>
+                    <div>
+                        <strong style="display: block; color: #111827; margin-bottom: 4px;">Responsibilities</strong>
+                        <div style="color: #4b5563;">{{ profile.responsibilities }}</div>
+                    </div>
+                    <div>
+                        <strong style="display: block; color: #111827; margin-bottom: 4px;">Perfect Tuesday
+                            (2035)</strong>
+                        <div style="color: #4b5563;">{{ profile.vision_perfect_tuesday }}</div>
+                    </div>
+                    <div>
+                        <strong style="display: block; color: #111827; margin-bottom: 4px;">The Toast Test</strong>
+                        <div style="color: #4b5563;">{{ profile.vision_toast_test }}</div>
+                    </div>
+                    <div>
+                        <strong style="display: block; color: #111827; margin-bottom: 4px;">The Anti-Vision</strong>
+                        <div style="color: #4b5563;">{{ profile.vision_anti_vision }}</div>
+                    </div>
+                    <div>
+                        <strong style="display: block; color: #111827; margin-bottom: 4px;">Stress Response</strong>
+                        <div style="color: #4b5563;">{{ profile.stress_response }}</div>
+                    </div>
+                    <div>
+                        <strong style="display: block; color: #111827; margin-bottom: 4px;">The Anchor</strong>
+                        <div style="color: #4b5563;">{{ profile.internal_anchor }}</div>
+                    </div>
+                </div>
+            </details>
         </div>
 
         <!-- INVITATIONS SECTION -->
