@@ -22,3 +22,5 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')), # Allauth URLs
     path('', include('core.urls')),    # <--- Add this line!
 ]
+
+handler500 = 'core.views.custom_500'

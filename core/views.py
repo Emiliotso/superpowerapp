@@ -299,3 +299,7 @@ def delete_invite_view(request, uuid):
     if request.method == 'POST':
         survey.delete()
     return redirect('dashboard')
+
+def custom_500(request):
+    import traceback
+    return HttpResponse(f"<h1>Server Error (500)</h1><pre>{traceback.format_exc()}</pre>", status=500)
