@@ -199,49 +199,59 @@ def chat_view(request):
 
 # --- DASHBOARD & AUTH ---
 
+from django.http import HttpResponse
+
 @login_required
 def dashboard_view(request):
-    # Ensure Profile exists
     try:
-        profile = request.user.profile
-    except Profile.DoesNotExist:
-        profile = Profile.objects.create(user=request.user)
+        # Ensure Profile exists
+        try:
+            profile = request.user.profile
+        except Profile.DoesNotExist:
+            profile = Profile.objects.create(user=request.user)
 
-    # Check Onboarding
-    if not profile.onboarding_completed:
-        return redirect('onboarding')
+        # Check Onboarding
+        if not profile.onboarding_completed:
+            return redirect('onboarding')
 
-    # Show only the logged-in user's surveys (invitations)
-    surveys = Survey.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'dashboard.html', {'surveys': surveys, 'profile': profile})
+        # Show only the logged-in user's surveys (invitations)
+        surveys = Survey.objects.filter(user=request.user).order_by('-created_at')
+        return render(request, 'dashboard.html', {'surveys': surveys, 'profile': profile})
+    except Exception as e:
+        import traceback
+        return HttpResponse(f"<h1>Debug Error</h1><pre>{traceback.format_exc()}</pre>", status=500)
 
 @login_required
 def onboarding_view(request):
-    # Ensure Profile exists
     try:
-        profile = request.user.profile
-    except Profile.DoesNotExist:
-        profile = Profile.objects.create(user=request.user)
+        # Ensure Profile exists
+        try:
+            profile = request.user.profile
+        except Profile.DoesNotExist:
+            profile = Profile.objects.create(user=request.user)
 
-    if request.method == 'POST':
-        profile.current_role = request.POST.get('role', '')
-        profile.responsibilities = request.POST.get('responsibilities', '')
-        profile.family_context = request.POST.get('family', '')
-        profile.core_values = request.POST.get('values', '')
-        
-        # New Vision Fields
-        profile.vision_perfect_tuesday = request.POST.get('vision_perfect_tuesday', '')
-        profile.vision_toast_test = request.POST.get('vision_toast_test', '')
-        profile.vision_anti_vision = request.POST.get('vision_anti_vision', '')
-        
-        # Internal OS
-        profile.stress_response = request.POST.get('stress', '')
-        profile.internal_anchor = request.POST.get('internal_anchor', '')
-        
-        profile.onboarding_completed = True
-        profile.save()
-        return redirect('dashboard')
-    return render(request, 'onboarding.html')
+        if request.method == 'POST':
+            profile.current_role = request.POST.get('role', '')
+            profile.responsibilities = request.POST.get('responsibilities', '')
+            profile.family_context = request.POST.get('family', '')
+            profile.core_values = request.POST.get('values', '')
+            
+            # New Vision Fields
+            profile.vision_perfect_tuesday = request.POST.get('vision_perfect_tuesday', '')
+            profile.vision_toast_test = request.POST.get('vision_toast_test', '')
+            profile.vision_anti_vision = request.POST.get('vision_anti_vision', '')
+            
+            # Internal OS
+            profile.stress_response = request.POST.get('stress', '')
+            profile.internal_anchor = request.POST.get('internal_anchor', '')
+            
+            profile.onboarding_completed = True
+            profile.save()
+            return redirect('dashboard')
+        return render(request, 'onboarding.html')
+    except Exception as e:
+        import traceback
+        return HttpResponse(f"<h1>Debug Error</h1><pre>{traceback.format_exc()}</pre>", status=500)
 
 @login_required
 def add_invite_view(request):
