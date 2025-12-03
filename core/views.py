@@ -255,38 +255,42 @@ def onboarding_view(request):
 
 @login_required
 def add_invite_view(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone', '')
-        
-        # Create the invitation
-        survey = Survey.objects.create(
-            user=request.user,
-            respondent_name=name,
-            respondent_email=email,
-            respondent_phone=phone
-        )
-        
-        # Generate Link
-        link = request.build_absolute_uri(reverse('survey_view', args=[survey.uuid]))
-        
-        # Send Email
-        try:
-            send_mail(
-                subject=f"Feedback Request from {request.user.username}",
-                message=f"Hi {name},\n\n{request.user.username} would value your feedback.\n\nPlease click here: {link}",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[email],
-                fail_silently=False,
+    try:
+        if request.method == 'POST':
+            name = request.POST.get('name')
+            email = request.POST.get('email')
+            phone = request.POST.get('phone', '')
+            
+            # Create the invitation
+            survey = Survey.objects.create(
+                user=request.user,
+                respondent_name=name,
+                respondent_email=email,
+                respondent_phone=phone
             )
-        except Exception as e:
-            print(f"Email Error: {e}")
-            # We still redirect to dashboard, but the error is logged.
-            # In a real app, we might show a message to the user.
-        
-        return redirect('dashboard')
-    return render(request, 'invite.html')
+            
+            # Generate Link
+            link = request.build_absolute_uri(reverse('survey_view', args=[survey.uuid]))
+            
+            # Send Email
+            try:
+                send_mail(
+                    subject=f"Feedback Request from {request.user.username}",
+                    message=f"Hi {name},\n\n{request.user.username} would value your feedback.\n\nPlease click here: {link}",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[email],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                print(f"Email Error: {e}")
+                # We still redirect to dashboard, but the error is logged.
+                # In a real app, we might show a message to the user.
+            
+            return redirect('dashboard')
+        return render(request, 'invite.html')
+    except Exception as e:
+        import traceback
+        return HttpResponse(f"<h1>Debug Error</h1><pre>{traceback.format_exc()}</pre>", status=500)
 
 @login_required
 def delete_invite_view(request, uuid):
