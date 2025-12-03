@@ -247,6 +247,7 @@ def onboarding_view(request):
             
             profile.onboarding_completed = True
             profile.save()
+            print(f"DEBUG: Onboarding saved for {request.user.username}. Completed: {profile.onboarding_completed}")
             return redirect('dashboard')
         return render(request, 'onboarding.html')
     except Exception as e:
