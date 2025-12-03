@@ -273,19 +273,31 @@ def add_invite_view(request):
             # Generate Link
             link = request.build_absolute_uri(reverse('survey_view', args=[survey.uuid]))
             
-            # Send Email
-            try:
-                send_mail(
-                    subject=f"Feedback Request from {request.user.username}",
-                    message=f"Hi {name},\n\n{request.user.username} would value your feedback.\n\nPlease click here: {link}",
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[email],
-                    fail_silently=False,
+            # Send Email in Background Thread
+            import threading
+            def send_email_thread(subject, message, from_email, recipient_list):
+                try:
+                    send_mail(
+                        subject=subject,
+                        message=message,
+                        from_email=from_email,
+                        recipient_list=recipient_list,
+                        fail_silently=False,
+                    )
+                    print(f"Email sent successfully to {recipient_list}")
+                except Exception as e:
+                    print(f"Email Error (Background): {e}")
+
+            email_thread = threading.Thread(
+                target=send_email_thread,
+                args=(
+                    f"Feedback Request from {request.user.username}",
+                    f"Hi {name},\n\n{request.user.username} would value your feedback.\n\nPlease click here: {link}",
+                    settings.DEFAULT_FROM_EMAIL,
+                    [email]
                 )
-            except Exception as e:
-                print(f"Email Error: {e}")
-                # We still redirect to dashboard, but the error is logged.
-                # In a real app, we might show a message to the user.
+            )
+            email_thread.start()
             
             return redirect('dashboard')
         return render(request, 'invite.html')
