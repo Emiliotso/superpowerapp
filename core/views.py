@@ -48,7 +48,10 @@ def profile_analysis_view(request):
     text_data = ""
     
     # Add User Context
-    profile = request.user.profile
+    try:
+        profile = request.user.profile
+    except Profile.DoesNotExist:
+        profile = Profile.objects.create(user=request.user)
     text_data += f"\n--- USER CONTEXT ---\n"
     text_data += f"Role: {profile.current_role}\n"
     text_data += f"Responsibilities: {profile.responsibilities}\n"
@@ -138,7 +141,10 @@ def chat_view(request):
             context_data = ""
             
             # Add User Context (Onboarding)
-            profile = request.user.profile
+            try:
+                profile = request.user.profile
+            except Profile.DoesNotExist:
+                profile = Profile.objects.create(user=request.user)
             context_data += f"\n--- USER CONTEXT ---\n"
             context_data += f"Role: {profile.current_role}\n"
             context_data += f"Responsibilities: {profile.responsibilities}\n"
@@ -195,13 +201,19 @@ def chat_view(request):
 
 @login_required
 def dashboard_view(request):
+    # Ensure Profile exists
+    try:
+        profile = request.user.profile
+    except Profile.DoesNotExist:
+        profile = Profile.objects.create(user=request.user)
+
     # Check Onboarding
-    if not request.user.profile.onboarding_completed:
+    if not profile.onboarding_completed:
         return redirect('onboarding')
 
     # Show only the logged-in user's surveys (invitations)
     surveys = Survey.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'dashboard.html', {'surveys': surveys, 'profile': request.user.profile})
+    return render(request, 'dashboard.html', {'surveys': surveys, 'profile': profile})
 
 @login_required
 def onboarding_view(request):
