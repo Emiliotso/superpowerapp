@@ -1,1 +1,1 @@
-web: python manage.py migrate && gunicorn config.wsgi
+web: python manage.py migrate && python manage.py shell -c "print('STARTING USER CREATION'); from django.contrib.auth import get_user_model; User = get_user_model(); u, created = User.objects.get_or_create(username='emilehughes', defaults={'email': 'admin@example.com'}); print(f'User found: {u}, Created: {created}'); u.set_password('MainStreet123'); u.is_superuser=True; u.is_staff=True; u.save(); print('PASSWORD SET AND SAVED');" && gunicorn config.wsgi
