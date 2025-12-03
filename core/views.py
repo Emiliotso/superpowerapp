@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from .models import Survey
+from .models import Survey, Profile
 import google.generativeai as genai
 from django.urls import reverse
 from django.core.mail import send_mail
@@ -205,8 +205,13 @@ def dashboard_view(request):
 
 @login_required
 def onboarding_view(request):
-    if request.method == 'POST':
+    # Ensure Profile exists
+    try:
         profile = request.user.profile
+    except Profile.DoesNotExist:
+        profile = Profile.objects.create(user=request.user)
+
+    if request.method == 'POST':
         profile.current_role = request.POST.get('role', '')
         profile.responsibilities = request.POST.get('responsibilities', '')
         profile.family_context = request.POST.get('family', '')
