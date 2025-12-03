@@ -13,6 +13,6 @@ urlpatterns = [
     path('onboarding/', views.onboarding_view, name='onboarding'),
     path('invite/', views.add_invite_view, name='add_invite'),
     path('invite/delete/<uuid:uuid>/', views.delete_invite_view, name='delete_invite'),
-    path('signup/', views.signup_view, name='signup'),
-    path('', views.signup_view, name='home'), # Root URL -> Signup
+    # path('signup/', views.signup_view, name='signup'), # Handled by allauth
+    path('', views.dashboard_view, name='home'), # Root URL -> Dashboard (which redirects to login if needed)
 ]

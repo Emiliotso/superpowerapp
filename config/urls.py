@@ -19,6 +19,6 @@ from django.urls import path, include  # <--- Make sure 'include' is imported he
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')), # Login/Logout
+    path('accounts/', include('allauth.urls')), # Allauth URLs
     path('', include('core.urls')),    # <--- Add this line!
 ]
