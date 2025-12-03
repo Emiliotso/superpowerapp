@@ -86,34 +86,92 @@
 
 <body>
     <div class="container">
-        <h1>Welcome! Let's get to know you.</h1>
-        <p class="intro">To help your AI coach provide the best advice, please tell us a bit about your professional and
-            personal context.</p>
+        <div class="onboarding-container">
+            <h1>Welcome to Your Superpower Journey</h1>
+            <p class="subtitle">To build your roadmap, we need to understand where you are and where you want to go.</p>
 
-        <form method="post">
-            {% csrf_token %}
+            <form method="post">
+                {% csrf_token %}
 
-            <label>1. Current Role & Industry</label>
-            <input type="text" name="role" required placeholder="e.g. VP of Engineering in Fintech">
+                <!-- Part 1: The Context -->
+                <div class="section">
+                    <h2>Part 1: The Context</h2>
 
-            <label>2. Key Responsibilities</label>
-            <textarea name="responsibilities" required
-                placeholder="Leading a team of 20, managing technical strategy..."></textarea>
+                    <div class="form-group">
+                        <label>Current Role & Industry</label>
+                        <input type="text" name="role" placeholder="e.g. VP of Product at a Fintech Scale-up" required>
+                    </div>
 
-            <label>3. Primary Career Goal (Next 12 Months)</label>
-            <textarea name="goal" required placeholder="Transition to CTO, launch a new product..."></textarea>
+                    <div class="form-group">
+                        <label>Key Responsibilities</label>
+                        <p class="help-text">What consumes 80% of your energy?</p>
+                        <textarea name="responsibilities" rows="3" required></textarea>
+                    </div>
 
-            <label>4. Family/Personal Context</label>
-            <textarea name="family" required placeholder="Married with 2 kids, enjoy hiking..."></textarea>
+                    <div class="form-group">
+                        <label>Family/Personal Context</label>
+                        <p class="help-text">Partner? Kids? Location? Any big personal commitments?</p>
+                        <textarea name="family" rows="2"></textarea>
+                    </div>
 
-            <label>5. Top 3 Core Values</label>
-            <input type="text" name="values" required placeholder="Integrity, Innovation, Empathy">
+                    <div class="form-group">
+                        <label>Top 3 Core Values</label>
+                        <textarea name="values" rows="2" placeholder="e.g. Autonomy, Mastery, Kindness"></textarea>
+                    </div>
+                </div>
 
-            <label>6. How do you typically react under pressure?</label>
-            <textarea name="stress" required placeholder="I tend to withdraw / I get micromanagy..."></textarea>
+                <!-- Part 2: The 10-Year Vision -->
+                <div class="section">
+                    <h2>Part 2: The 10-Year Vision (The North Star)</h2>
+                    <p class="section-desc">To give you the best roadmap, we need to know exactly where you're going.
+                    </p>
 
-            <button type="submit">Complete Profile</button>
-        </form>
+                    <div class="form-group">
+                        <label>The "Perfect Tuesday" in 2035</label>
+                        <p class="help-text">Don't just tell us your job title. Describe an ideal average Tuesday 10
+                            years from now. Where do you wake up? Who are you with? What specific problems are you
+                            solving? How does your body feel?</p>
+                        <textarea name="vision_perfect_tuesday" rows="5" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>The "Toast" Test</label>
+                        <p class="help-text">Imagine a dinner party celebrating your last decade. A close friend stands
+                            up to make a toast about who you have become as a person. What specific character traits or
+                            changes do you hope they describe?</p>
+                        <textarea name="vision_toast_test" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>The Anti-Vision</label>
+                        <p class="help-text">What is the one thing about your current life or work that must NOT exist
+                            in your life 10 years from now?</p>
+                        <textarea name="vision_anti_vision" rows="3" required></textarea>
+                    </div>
+                </div>
+
+                <!-- Part 3: The Internal Operating System -->
+                <div class="section">
+                    <h2>Part 3: The Internal Operating System</h2>
+
+                    <div class="form-group">
+                        <label>Pressure Reflex</label>
+                        <p class="help-text">How do you typically react under extreme pressure? (e.g., Do you shut down?
+                            Do you get aggressive? Do you become a perfectionist?)</p>
+                        <textarea name="stress" rows="3" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>The Anchor</label>
+                        <p class="help-text">What is the biggest internal fear or habit that you suspect is currently
+                            holding you back from that 10-Year Vision?</p>
+                        <textarea name="internal_anchor" rows="3" required></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">Complete Profile</button>
+            </form>
+        </div>
     </div>
 </body>
 

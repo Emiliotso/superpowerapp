@@ -31,12 +31,24 @@ class Profile(models.Model):
     
     # Onboarding / User Context
     onboarding_completed = models.BooleanField(default=False)
+    
+    # Part 1: Context
     current_role = models.CharField(max_length=255, blank=True)
     responsibilities = models.TextField(blank=True)
-    career_goal = models.TextField(blank=True)
     family_context = models.TextField(blank=True)
     core_values = models.TextField(blank=True)
-    stress_response = models.TextField(blank=True)
+    
+    # Part 2: 10-Year Vision
+    vision_perfect_tuesday = models.TextField(blank=True, verbose_name="The Perfect Tuesday in 2035")
+    vision_toast_test = models.TextField(blank=True, verbose_name="The Toast Test")
+    vision_anti_vision = models.TextField(blank=True, verbose_name="The Anti-Vision")
+
+    # Part 3: Internal Operating System
+    stress_response = models.TextField(blank=True, verbose_name="Pressure Reflex")
+    internal_anchor = models.TextField(blank=True, verbose_name="The Anchor")
+    
+    # Deprecated / Replaced (Keep for now or remove if fresh start? User just wiped DB so we can keep or repurpose)
+    career_goal = models.TextField(blank=True) # Can be deprecated or kept as summary
 
     def __str__(self):
         return f"Profile for {self.user.username}"

@@ -51,10 +51,17 @@ def profile_analysis_view(request):
     text_data += f"\n--- USER CONTEXT ---\n"
     text_data += f"Role: {profile.current_role}\n"
     text_data += f"Responsibilities: {profile.responsibilities}\n"
-    text_data += f"Goal: {profile.career_goal}\n"
     text_data += f"Family: {profile.family_context}\n"
     text_data += f"Values: {profile.core_values}\n"
+    
+    text_data += f"\n--- 10-YEAR VISION ---\n"
+    text_data += f"Perfect Tuesday (2035): {profile.vision_perfect_tuesday}\n"
+    text_data += f"Toast Test: {profile.vision_toast_test}\n"
+    text_data += f"Anti-Vision: {profile.vision_anti_vision}\n"
+    
+    text_data += f"\n--- INTERNAL OPERATING SYSTEM ---\n"
     text_data += f"Stress Response: {profile.stress_response}\n"
+    text_data += f"The Anchor: {profile.internal_anchor}\n"
     
     for s in completed_surveys:
         text_data += f"\n--- Feedback from {s.respondent_name} ---\n"
@@ -114,10 +121,17 @@ def chat_view(request):
             context_data += f"\n--- USER CONTEXT ---\n"
             context_data += f"Role: {profile.current_role}\n"
             context_data += f"Responsibilities: {profile.responsibilities}\n"
-            context_data += f"Goal: {profile.career_goal}\n"
             context_data += f"Family: {profile.family_context}\n"
             context_data += f"Values: {profile.core_values}\n"
+            
+            context_data += f"\n--- 10-YEAR VISION ---\n"
+            context_data += f"Perfect Tuesday (2035): {profile.vision_perfect_tuesday}\n"
+            context_data += f"Toast Test: {profile.vision_toast_test}\n"
+            context_data += f"Anti-Vision: {profile.vision_anti_vision}\n"
+            
+            context_data += f"\n--- INTERNAL OPERATING SYSTEM ---\n"
             context_data += f"Stress Response: {profile.stress_response}\n"
+            context_data += f"The Anchor: {profile.internal_anchor}\n"
 
             for s in completed_surveys:
                 context_data += f"\n--- Feedback (Anonymous) ---\n"
@@ -173,10 +187,18 @@ def onboarding_view(request):
         profile = request.user.profile
         profile.current_role = request.POST.get('role', '')
         profile.responsibilities = request.POST.get('responsibilities', '')
-        profile.career_goal = request.POST.get('goal', '')
         profile.family_context = request.POST.get('family', '')
         profile.core_values = request.POST.get('values', '')
+        
+        # New Vision Fields
+        profile.vision_perfect_tuesday = request.POST.get('vision_perfect_tuesday', '')
+        profile.vision_toast_test = request.POST.get('vision_toast_test', '')
+        profile.vision_anti_vision = request.POST.get('vision_anti_vision', '')
+        
+        # Internal OS
         profile.stress_response = request.POST.get('stress', '')
+        profile.internal_anchor = request.POST.get('internal_anchor', '')
+        
         profile.onboarding_completed = True
         profile.save()
         return redirect('dashboard')
