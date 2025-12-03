@@ -1,1 +1,1 @@
-web: python manage.py reset_superuser_password "emilehughes" "MainStreet123" && python manage.py migrate && gunicorn config.wsgi
+web: DJANGO_SUPERUSER_PASSWORD=MainStreet123 DJANGO_SUPERUSER_USERNAME=emilehughes DJANGO_SUPERUSER_EMAIL=admin@example.com python manage.py createsuperuser --noinput || true && python manage.py migrate && gunicorn config.wsgi
