@@ -1,1 +1,1 @@
-web: DJANGO_SUPERUSER_PASSWORD=MainStreet123 DJANGO_SUPERUSER_USERNAME=emilehughes DJANGO_SUPERUSER_EMAIL=admin@example.com python manage.py createsuperuser --noinput || true && python manage.py migrate && gunicorn config.wsgi
+web: python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); u, created = User.objects.get_or_create(username='emilehughes', defaults={'email': 'admin@example.com'}); u.set_password('MainStreet123'); u.is_superuser=True; u.is_staff=True; u.save()" && python manage.py migrate && gunicorn config.wsgi
