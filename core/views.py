@@ -297,7 +297,8 @@ def add_invite_view(request):
                     [email]
                 )
             )
-            email_thread.start()
+            # email_thread.start()
+            print("Email sending temporarily disabled for debugging.")
             
             return redirect('dashboard')
         return render(request, 'invite.html')
