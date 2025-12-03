@@ -17,9 +17,18 @@ class Survey(models.Model):
 
     # Answers
     relationship_context = models.TextField(blank=True, verbose_name="How do you know them?")
-    foxhole_answer = models.TextField(blank=True, verbose_name="Describe a situation where they were at their best. Why would you want them by your side in a crisis?")
-    magic_answer = models.TextField(blank=True, verbose_name="If you could magically grant them one improvement to help them grow, what would it be?")
-    shadow_answer = models.TextField(blank=True, verbose_name="What specific behaviors emerge when they are stressed, tired, or under pressure?")
+    
+    # 1. The Energy Audit
+    energy_audit_answer = models.TextField(blank=True, verbose_name="The Energy Audit")
+    
+    # 2. The Stress Profile
+    stress_profile_answer = models.TextField(blank=True, verbose_name="The Stress Profile")
+    
+    # 3. The Glass Ceiling
+    glass_ceiling_answer = models.TextField(blank=True, verbose_name="The Glass Ceiling")
+    
+    # 4. The Future Self
+    future_self_answer = models.TextField(blank=True, verbose_name="The Future Self")
 
     def __str__(self):
         return f"Invite to {self.respondent_name} ({self.user.username})"

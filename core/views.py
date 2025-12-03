@@ -19,9 +19,10 @@ def survey_view(request, uuid):
     # 2. If POST, save answers
     if request.method == 'POST':
         survey.relationship_context = request.POST.get('relationship', '')
-        survey.foxhole_answer = request.POST.get('foxhole', '')
-        survey.magic_answer = request.POST.get('magic', '')
-        survey.shadow_answer = request.POST.get('shadow', '')
+        survey.energy_audit_answer = request.POST.get('energy_audit', '')
+        survey.stress_profile_answer = request.POST.get('stress_profile', '')
+        survey.glass_ceiling_answer = request.POST.get('glass_ceiling', '')
+        survey.future_self_answer = request.POST.get('future_self', '')
         survey.is_completed = True
         survey.save()
         return render(request, 'thank_you.html')
@@ -66,9 +67,10 @@ def profile_analysis_view(request):
     for s in completed_surveys:
         text_data += f"\n--- Feedback from {s.respondent_name} ---\n"
         text_data += f"Context: {s.relationship_context}\n"
-        text_data += f"Greatest Strength (Foxhole): {s.foxhole_answer}\n"
-        text_data += f"Growth Area (Magic Wand): {s.magic_answer}\n"
-        text_data += f"Stress Behavior (Shadow): {s.shadow_answer}\n"
+        text_data += f"Energy Audit: {s.energy_audit_answer}\n"
+        text_data += f"Stress Profile: {s.stress_profile_answer}\n"
+        text_data += f"Glass Ceiling: {s.glass_ceiling_answer}\n"
+        text_data += f"Future Self: {s.future_self_answer}\n"
 
     # 2. Configure Gemini
     genai.configure(api_key=GOOGLE_API_KEY)
@@ -76,19 +78,38 @@ def profile_analysis_view(request):
 
     # 3. Create the Prompt
     prompt = f"""
-    You are an expert executive coach. Read the following feedback about a user from multiple people and multiple contexts.
+    Role: You are an expert developmental psychologist and executive coach, fluent in the Enneagram, Internal Family Systems (IFS), The 6 Types of Working Genius, and Vertical Leadership Development.
     
-    FEEDBACK:
+    Input Data: You will receive 360-feedback from peers AND the user's own "10-Year Vision" from their onboarding.
+    
+    FEEDBACK DATA:
     {text_data}
     
-    TASK:
-    Synthesize all the feedback into a single, cohesive GLOBAL profile.
+    Objective: Synthesize the inputs into a high-impact "User Manual" for the subject. Do not summarize; interpret the data to reveal their operating system. Use "Radical Candor"—be direct, kind, and psychologically deep.
     
-    1. **The Core Superpower**: Identify the single greatest strength that appears consistently across all feedback.
-    2. **Enneagram Analysis**: Analyze their likely Enneagram type based on the *collective* behaviors described.
-    3. **Actionable Advice**: Provide one piece of deep, actionable advice based on the synthesized feedback.
+    Output Format:
     
-    Keep the tone encouraging, deep, and holistic.
+    Section 1: Who You Are (The Operating System)
+    * Core Motivation: Identify their likely Enneagram Type based on their stressors and desires.
+    * Zone of Genius: Contrast where they have *competence* vs. where they actually get *energy* (Working Genius).
+    
+    Section 2: The Gap (Intent vs. Impact)
+    * The Protectors (IFS): explicitly name the "Characters" that show up when they are stressed (e.g., "The Steamroller," "The Ghost," "The Martyr") and explain the specific cost of these behaviors on their relationships.
+    * The Blind Spot: Highlight the specific behavior (Vertical Development edge) that threatens to sabotage their 10-Year Vision.
+    
+    Section 3: The North Star
+    * Compare their *Self-Reported Vision* with *Peer Feedback*. Are they aligned? Is the user under-selling or over-selling themselves?
+    * Paint a vivid picture of them operating at the "Self-Transforming" level of maturity.
+    
+    Section 4: The Manual (The Path Forward)
+    * The Daily Practice: One specific micro-habit to integrate their Shadow/Protectors (e.g., "The 5-Minute Pause," "Solicited Criticism").
+    * The Media Stack:
+        * Read: 1 specific book (with a 1-sentence "why").
+        * Watch: 1 movie or show that mirrors their specific character arc.
+        * Listen: 1 specific podcast episode.
+    * The Experience:
+        * General: A specific type of activity to break their pattern (e.g., Improv, Jiu-Jitsu, Silent Retreat).
+        * Local: If the user's location is known, suggest a specific local venue/vendor. If unknown, suggest how to find the best local option.
     """
 
     # 4. Ask Gemini
@@ -136,9 +157,10 @@ def chat_view(request):
             for s in completed_surveys:
                 context_data += f"\n--- Feedback (Anonymous) ---\n"
                 context_data += f"Context: {s.relationship_context}\n"
-                context_data += f"Strength: {s.foxhole_answer}\n"
-                context_data += f"Growth: {s.magic_answer}\n"
-                context_data += f"Stress: {s.shadow_answer}\n"
+                context_data += f"Energy: {s.energy_audit_answer}\n"
+                context_data += f"Stress: {s.stress_profile_answer}\n"
+                context_data += f"Glass Ceiling: {s.glass_ceiling_answer}\n"
+                context_data += f"Future Self: {s.future_self_answer}\n"
 
             # 2. Configure Gemini
             genai.configure(api_key=GOOGLE_API_KEY)
