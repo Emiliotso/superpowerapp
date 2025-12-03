@@ -16,7 +16,10 @@ class Command(BaseCommand):
         try:
             user = User.objects.get(username=username)
             user.set_password(password)
+            user.is_superuser = True
+            user.is_staff = True
             user.save()
             self.stdout.write(self.style.SUCCESS(f'Successfully reset password for "{username}"'))
         except User.DoesNotExist:
-            self.stdout.write(self.style.ERROR(f'User "{username}" does not exist'))
+            User.objects.create_superuser(username=username, email='admin@example.com', password=password)
+            self.stdout.write(self.style.SUCCESS(f'Successfully created superuser "{username}"'))
