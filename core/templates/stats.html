@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Feedback Stats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f4f4f9;
+            padding: 20px;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2563eb;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .label {
+            color: #6b7280;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .feedback-list {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .item {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .meta {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .sentiment-tag {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .tag-insightful {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+
+        .tag-intense {
+            background: #fff7ed;
+            color: #9a3412;
+        }
+
+        .tag-confusing {
+            background: #eff6ff;
+            color: #1e40af;
+        }
+
+        .tag-boring {
+            background: #f9fafb;
+            color: #374151;
+        }
+
+        .comment {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .empty {
+            color: #9ca3af;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>Survey Feedback Stats</h1>
+            <a href="{% url 'dashboard' %}" style="text-decoration: none; color: #2563eb;">&larr; Back to Dashboard</a>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <span class="number">{{ total_feedback }}</span>
+                <span class="label">Total Responses</span>
+            </div>
+            <div class="card">
+                <span class="number">{{ sentiment_counts.insightful|default:"0" }}</span>
+                <span class="label">Insightful</span>
+            </div>
+            <div class="card">
+                <span class="number">{{ sentiment_counts.intense|default:"0" }}</span>
+                <span class="label">Intense</span>
+            </div>
+            <div class="card">
+                <span class="number">{{ sentiment_counts.confusing|default:"0" }}</span>
+                <span class="label">Confusing</span>
+            </div>
+        </div>
+
+        <h2>Recent Comments</h2>
+        <div class="feedback-list">
+            {% for item in recent_feedback %}
+            <div class="item">
+                <div class="meta">
+                    <span>{{ item.created_at|date:"M d, Y H:i" }}</span>
+                    <span class="sentiment-tag tag-{{ item.sentiment }}">{{ item.sentiment }}</span>
+                </div>
+                {% if item.comment %}
+                <div class="comment">{{ item.comment }}</div>
+                {% else %}
+                <div class="comment empty">No comment provided</div>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="item" style="text-align: center; color: #9ca3af;">No feedback yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+</html>

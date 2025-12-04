@@ -13,6 +13,7 @@ urlpatterns = [
     # Dashboard & Auth
     path('', views.landing_view, name='landing'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
+    path('stats/', views.stats_view, name='stats'),
     path('onboarding/', views.onboarding_view, name='onboarding'),
     path('invite/', views.add_invite_view, name='add_invite'),
     path('invite/delete/<uuid:uuid>/', views.delete_invite_view, name='delete_invite'),

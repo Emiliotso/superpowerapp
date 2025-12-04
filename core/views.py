@@ -364,3 +364,25 @@ def survey_feedback_view(request, uuid):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@login_required
+def stats_view(request):
+    if not request.user.is_superuser:
+        return redirect('dashboard')
+        
+    # Aggregate counts
+    from django.db.models import Count
+    total_feedback = SurveyFeedback.objects.count()
+    
+    # Get counts per sentiment
+    counts = SurveyFeedback.objects.values('sentiment').annotate(count=Count('sentiment'))
+    sentiment_counts = {item['sentiment']: item['count'] for item in counts}
+    
+    # Get recent feedback
+    recent_feedback = SurveyFeedback.objects.order_by('-created_at')[:50]
+    
+    return render(request, 'stats.html', {
+        'total_feedback': total_feedback,
+        'sentiment_counts': sentiment_counts,
+        'recent_feedback': recent_feedback
+    })
