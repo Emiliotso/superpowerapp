@@ -338,3 +338,8 @@ def public_survey_view(request, uuid):
 def custom_500(request):
     import traceback
     return HttpResponse(f"<h1>Server Error (500)</h1><pre>{traceback.format_exc()}</pre>", status=500)
+
+def landing_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    return render(request, 'landing.html')
