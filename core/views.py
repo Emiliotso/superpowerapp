@@ -313,6 +313,28 @@ def delete_invite_view(request, uuid):
         survey.delete()
     return redirect('dashboard')
 
+def public_survey_view(request, uuid):
+    # 1. Find the user who owns this public link
+    profile = get_object_or_404(Profile, public_link_uuid=uuid)
+    user = profile.user
+    
+    if request.method == 'POST':
+        # 2. Create a new Survey object for this respondent
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        
+        survey = Survey.objects.create(
+            user=user,
+            respondent_name=name,
+            respondent_email=email,
+            is_completed=False # They still need to fill it out
+        )
+        
+        # 3. Redirect them to the actual survey form
+        return redirect('survey_view', uuid=survey.uuid)
+        
+    return render(request, 'public_invite.html', {'user': user})
+
 def custom_500(request):
     import traceback
     return HttpResponse(f"<h1>Server Error (500)</h1><pre>{traceback.format_exc()}</pre>", status=500)

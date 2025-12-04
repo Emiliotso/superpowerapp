@@ -56,6 +56,9 @@ class Profile(models.Model):
     stress_response = models.TextField(blank=True, verbose_name="Pressure Reflex")
     internal_anchor = models.TextField(blank=True, verbose_name="The Anchor")
     
+    # Public Link
+    public_link_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    
     # Deprecated / Replaced (Keep for now or remove if fresh start? User just wiped DB so we can keep or repurpose)
     career_goal = models.TextField(blank=True) # Can be deprecated or kept as summary
 

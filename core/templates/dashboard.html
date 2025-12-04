@@ -373,6 +373,22 @@
 
         <!-- INVITATIONS SECTION -->
         <h2 class="section-title">Feedback Invitations</h2>
+
+        <!-- PUBLIC LINK CARD -->
+        <div
+            style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 30px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <h3 style="margin: 0 0 5px 0; color: #111827;">Your Public Link</h3>
+                <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">Share this link anywhere (Slack, Email, etc).
+                    Anyone with the link can give you feedback.</p>
+            </div>
+            <button
+                onclick="copyLink('{{ request.scheme }}://{{ request.get_host }}{% url 'public_survey' profile.public_link_uuid %}')"
+                style="background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                Copy Public Link
+            </button>
+        </div>
+
         <a href="{% url 'add_invite' %}" class="invite-btn">+ Send New Invitation</a>
 
         <div class="card-grid">
