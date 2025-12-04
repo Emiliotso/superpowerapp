@@ -33,6 +33,15 @@ class Survey(models.Model):
     def __str__(self):
         return f"Invite to {self.respondent_name} ({self.user.username})"
 
+class SurveyFeedback(models.Model):
+    survey = models.OneToOneField(Survey, on_delete=models.CASCADE, related_name='feedback')
+    sentiment = models.CharField(max_length=50) # 'insightful', 'intense', 'confusing', 'boring'
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feedback for {self.survey}: {self.sentiment}"
+
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     ai_summary = models.TextField(blank=True, null=True)

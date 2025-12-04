@@ -29,8 +29,97 @@
 <body>
     <div class="container">
         <h1>Received!</h1>
-        <p>Thank you for contributing to this profile.</p>
+        <p>Thank you for contributing to this profile. Your feedback is safe with us.</p>
+
+        <div id="feedback-section" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px;">
+            <p style="font-weight: bold; color: #374151; margin-bottom: 20px;">How did it feel to answer these
+                questions?</p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <button onclick="sendFeedback('insightful')" class="sentiment-btn"
+                    style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;">
+                    💡 Deep / Insightful
+                </button>
+                <button onclick="sendFeedback('intense')" class="sentiment-btn"
+                    style="background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa;">
+                    😅 A bit intense
+                </button>
+                <button onclick="sendFeedback('confusing')" class="sentiment-btn"
+                    style="background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;">
+                    🤔 Confusing
+                </button>
+                <button onclick="sendFeedback('boring')" class="sentiment-btn"
+                    style="background: #f9fafb; color: #374151; border: 1px solid #e5e7eb;">
+                    😴 Boring
+                </button>
+            </div>
+
+            <div id="comment-box" style="display: none;">
+                <textarea id="feedback-comment" placeholder="Any specific thoughts? (Optional)"
+                    style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px;"></textarea>
+                <button onclick="submitComment()"
+                    style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Send</button>
+            </div>
+
+            <div id="thank-you-msg" style="display: none; color: #10b981; font-weight: bold; margin-top: 20px;">
+                Thanks for helping us improve!
+            </div>
+        </div>
     </div>
+
+    <script>
+        let currentSentiment = '';
+
+        function sendFeedback(sentiment) {
+            currentSentiment = sentiment;
+
+            // Visual feedback
+            document.querySelectorAll('.sentiment-btn').forEach(btn => btn.style.opacity = '0.5');
+            event.target.style.opacity = '1';
+            event.target.style.transform = 'scale(1.05)';
+
+            // Show comment box
+            document.getElementById('comment-box').style.display = 'block';
+
+            // Send initial sentiment
+            submitData(sentiment, '');
+        }
+
+        function submitComment() {
+            const comment = document.getElementById('feedback-comment').value;
+            submitData(currentSentiment, comment);
+
+            document.getElementById('comment-box').style.display = 'none';
+            document.getElementById('thank-you-msg').style.display = 'block';
+        }
+
+        function submitData(sentiment, comment) {
+            fetch('{% url "survey_feedback" survey_uuid %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ sentiment: sentiment, comment: comment })
+            });
+        }
+    </script>
+
+    <style>
+        .sentiment-btn {
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .sentiment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+    </style>
 </body>
 
 </html>

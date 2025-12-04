@@ -1,12 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from .models import Survey, Profile
+from .models import Survey, Profile, SurveyFeedback
 import google.generativeai as genai
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
+import threading
 import json
 
 # PASTE YOUR GOOGLE KEY HERE
@@ -25,11 +26,13 @@ def survey_view(request, uuid):
         survey.future_self_answer = request.POST.get('future_self', '')
         survey.is_completed = True
         survey.save()
-        return render(request, 'thank_you.html')
+        survey.is_completed = True
+        survey.save()
+        return render(request, 'thank_you.html', {'survey_uuid': survey.uuid})
 
     # 3. If GET, show the form (only if not completed)
     if survey.is_completed:
-         return render(request, 'thank_you.html')
+         return render(request, 'thank_you.html', {'survey_uuid': survey.uuid})
          
     return render(request, 'survey_form.html', {'survey': survey})
 
@@ -343,3 +346,21 @@ def landing_view(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
     return render(request, 'landing.html')
+
+def survey_feedback_view(request, uuid):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            survey = get_object_or_404(Survey, uuid=uuid)
+            
+            # Create or update feedback
+            feedback, created = SurveyFeedback.objects.get_or_create(survey=survey)
+            feedback.sentiment = data.get('sentiment', '')
+            if data.get('comment'):
+                feedback.comment = data.get('comment', '')
+            feedback.save()
+            
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
