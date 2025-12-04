@@ -87,14 +87,14 @@
             <div class="form-group">
                 <label>1. The Energy Audit</label>
                 <p class="help-text">Everyone is competent at things they actually hate doing. But what is the work that
-                    gives {{ survey.respondent_name }} <strong>energy</strong>? Describe a time you saw them in a state
+                    gives {{ survey.user.username }} <strong>energy</strong>? Describe a time you saw them in a state
                     of 'flow'—happiest, most effective, and seemingly effortless.</p>
                 <textarea name="energy_audit" rows="4" required></textarea>
             </div>
 
             <div class="form-group">
                 <label>2. The Stress Profile</label>
-                <p class="help-text">When {{ survey.respondent_name }} feels threatened, insecure, or deeply stressed,
+                <p class="help-text">When {{ survey.user.username }} feels threatened, insecure, or deeply stressed,
                     who do they 'turn into'? (e.g., Do they go quiet and vanish? Do they become aggressive and
                     controlling? Do they become chaotic?) Please describe that character.</p>
                 <textarea name="stress_profile" rows="4" required></textarea>
@@ -102,7 +102,7 @@
 
             <div class="form-group">
                 <label>3. The Glass Ceiling</label>
-                <p class="help-text">If {{ survey.respondent_name }} fails to reach their full potential in the next 5
+                <p class="help-text">If {{ survey.user.username }} fails to reach their full potential in the next 5
                     years, what behavior or mindset will be the cause? What is the 'hard truth' they might not realize
                     about how they impact others?</p>
                 <textarea name="glass_ceiling" rows="4" required></textarea>
@@ -110,7 +110,7 @@
 
             <div class="form-group">
                 <label>4. The Future Self</label>
-                <p class="help-text">Imagine {{ survey.respondent_name }} at their absolute best, 3 years from now. What
+                <p class="help-text">Imagine {{ survey.user.username }} at their absolute best, 3 years from now. What
                     kind of leader or person have they become? What is the biggest change they made to get there?</p>
                 <textarea name="future_self" rows="4" required></textarea>
             </div>
