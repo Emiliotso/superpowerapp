@@ -14,6 +14,18 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='profile',
             name='public_link_uuid',
+            field=models.UUIDField(default=uuid.uuid4, editable=False, null=True),
+        ),
+        migrations.RunPython(
+            code=lambda apps, schema_editor: [
+                (setattr(row, 'public_link_uuid', uuid.uuid4()), row.save())
+                for row in apps.get_model('core', 'Profile').objects.all()
+            ],
+            reverse_code=migrations.RunPython.noop,
+        ),
+        migrations.AlterField(
+            model_name='profile',
+            name='public_link_uuid',
             field=models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
         ),
     ]
