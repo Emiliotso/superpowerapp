@@ -283,6 +283,96 @@
             background: #ecfdf5;
             color: #065f46;
         }
+
+        /* Report Styling */
+        .report-section {
+            margin-bottom: 30px;
+        }
+
+        .report-section h3 {
+            color: #2563eb;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 8px;
+        }
+
+        .report-section p {
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .report-section ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .report-section li {
+            margin-bottom: 8px;
+        }
+
+        /* Print Styling */
+        .report-header-print {
+            display: none;
+            /* Hidden on screen */
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                color: black;
+            }
+
+            .container {
+                max-width: 100%;
+                margin: 0;
+            }
+
+            /* Hide everything unrelated to report */
+            .header,
+            .logout,
+            .profile-section>button,
+            .chat-container,
+            summary,
+            .invite-btn,
+            .card-grid,
+            .no-print,
+            h2.section-title,
+            .header h1,
+            .header a {
+                display: none !important;
+            }
+
+            /* Ensure report is visible and formatted */
+            .report-container {
+                display: block !important;
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                border: none;
+            }
+
+            .report-content {
+                padding: 0;
+            }
+
+            .report-header-print {
+                display: block;
+                margin-bottom: 30px;
+                border-bottom: 2px solid #000;
+            }
+
+            .report-header-print h2 {
+                font-size: 24px;
+                margin: 0;
+            }
+
+            .report-section h3 {
+                color: black;
+                border-bottom: 1px solid black;
+            }
+        }
     </style>
 </head>
 
@@ -310,8 +400,13 @@
             <button id="revealBtn" class="reveal-btn">View My Leadership Profile</button>
 
             <div id="reportContainer" class="report-container">
-                <div class="report-content">
-                    <h2>Your Leadership Profile</h2>
+                <div class="report-content" id="printableReport">
+                    <div class="report-header-print">
+                        <h2>Leadership Profile: {{ request.user.username }}</h2>
+                        <p style="color: #6b7280; margin-bottom: 20px;">Generated on {{ profile.last_updated|date:"F j,
+                            Y" }}</p>
+                    </div>
+
                     {% if profile.ai_summary == "__ANALYZING__" %}
                     <div style="text-align: center; padding: 40px;">
                         <div style="font-size: 3rem; margin-bottom: 20px;">🧠</div>
@@ -321,19 +416,29 @@
                         <div style="margin-top: 20px; font-weight: 600; color: #2563eb;">Please wait... page will
                             refresh automatically.</div>
                         <script>
-                                setTimeout(function(){
-                                    window.location.reload();
-                                }, 5000); 
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 5000); 
                         </script>
                     </div>
                     {% elif profile.ai_summary %}
-                    <div class="ai-text">{{ profile.ai_summary|linebreaksbr }}</div>
-                    <p
-                        style="color: #9ca3af; font-size: 0.8rem; margin-top: 30px; border-top: 1px solid #f3f4f6; padding-top: 10px;">
-                        Last updated: {{ profile.last_updated }} •
-                        <a href="{% url 'profile_analysis' %}" class="refresh-link">Refresh Analysis</a>
-                    </p>
+                    <div class="ai-text">
+                        {{ profile.ai_summary|safe }}
+                    </div>
+
+                    <div class="report-actions no-print">
+                        <p
+                            style="color: #9ca3af; font-size: 0.8rem; margin-top: 30px; border-top: 1px solid #f3f4f6; padding-top: 10px;">
+                            Last updated: {{ profile.last_updated }} •
+                            <a href="{% url 'profile_analysis' %}" class="refresh-link">Refresh Analysis</a>
+                        </p>
+                        <button onclick="window.print()"
+                            style="background: white; border: 1px solid #d1d5db; padding: 8px 16px; border-radius: 6px; cursor: pointer; color: #374151; font-weight: 600; margin-top: 10px;">
+                            📄 Save as PDF / Print
+                        </button>
+                    </div>
                     {% else %}
+                    <h2>Your Leadership Profile</h2>
                     <p>No analysis generated yet. Collect feedback and click "Refresh Analysis" to build your profile.
                     </p>
                     <a href="{% url 'profile_analysis' %}" class="refresh-link">Generate First Profile</a>

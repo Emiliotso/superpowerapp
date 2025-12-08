@@ -183,27 +183,45 @@ def profile_analysis_view(request):
     
     Output Format:
     
-    Section 1: Who You Are (The Operating System)
-    * Core Motivation: Identify their likely Enneagram Type based on their stressors and desires.
-    * Zone of Genius: Contrast where they have *competence* vs. where they actually get *energy* (Working Genius).
-    
-    Section 2: The Gap (Intent vs. Impact)
-    * The Protectors (IFS): explicitly name the "Characters" that show up when they are stressed (e.g., "The Steamroller," "The Ghost," "The Martyr") and explain the specific cost of these behaviors on their relationships.
-    * The Blind Spot: Highlight the specific behavior (Vertical Development edge) that threatens to sabotage their 10-Year Vision.
-    
-    Section 3: The North Star
-    * Compare their *Self-Reported Vision* with *Peer Feedback*. Are they aligned? Is the user under-selling or over-selling themselves?
-    * Paint a vivid picture of them operating at the "Self-Transforming" level of maturity.
-    
-    Section 4: The Manual (The Path Forward)
-    * The Daily Practice: One specific micro-habit to integrate their Shadow/Protectors (e.g., "The 5-Minute Pause," "Solicited Criticism").
-    * The Media Stack:
-        * Read: 1 specific book (with a 1-sentence "why").
-        * Watch: 1 movie or show that mirrors their specific character arc.
-        * Listen: 1 specific podcast episode.
-    * The Experience:
-        * General: A specific type of activity to break their pattern (e.g., Improv, Jiu-Jitsu, Silent Retreat).
-        * Local: If the user's location is known, suggest a specific local venue/vendor. If unknown, suggest how to find the best local option.
+    Return pure HTML code (no markdown backticks, no markdown syntax like **, #). structure it as follows:
+
+    <div class="report-section">
+        <h3>Section 1: Who You Are (The Operating System)</h3>
+        <p><strong>Core Motivation:</strong> [Enneagram Insight]</p>
+        <p><strong>Zone of Genius:</strong> [Working Genius Insight]</p>
+    </div>
+
+    <div class="report-section">
+        <h3>Section 2: The Gap (Intent vs. Impact)</h3>
+        <p><strong>The Protectors (IFS):</strong></p>
+        <ul>
+            <li>[Character Name]: [Description of behavior and cost]</li>
+        </ul>
+        <p><strong>The Blind Spot:</strong> [Vertical Development Insight]</p>
+    </div>
+
+    <div class="report-section">
+        <h3>Section 3: The North Star</h3>
+        <p>[Comparison of Self-Report vs Peer Feedback]</p>
+        <p><strong>Vision of Maturity:</strong> [Description of them at Self-Transforming level]</p>
+    </div>
+
+    <div class="report-section">
+        <h3>Section 4: The Manual (The Path Forward)</h3>
+        <p><strong>The Daily Practice:</strong> [Specific Micro-habit]</p>
+        
+        <p><strong>The Media Stack:</strong></p>
+        <ul>
+            <li><strong>Read:</strong> [Book Title] - [Why]</li>
+            <li><strong>Watch:</strong> [Movie/Show] - [Why]</li>
+            <li><strong>Listen:</strong> [Podcast Episode] - [Why]</li>
+        </ul>
+
+        <p><strong>The Experience:</strong></p>
+        <ul>
+            <li>[Activity Recommendation]</li>
+        </ul>
+    </div>
     """
 
     # Set Status Marker
