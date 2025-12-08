@@ -10,8 +10,8 @@ from django.http import HttpResponse, JsonResponse
 import threading
 import json
 
-# PASTE YOUR GOOGLE KEY HERE
-GOOGLE_API_KEY = "AIzaSyA44_vEHOMlzZdErpMajfs2SJNh5Oq1-fM"
+# API Key managed via environment variables
+
 
 def survey_view(request, uuid):
     # 1. Find the specific invitation
@@ -79,8 +79,14 @@ def profile_analysis_view(request):
         text_data += f"Future Self: {s.future_self_answer}\n"
 
     # 2. Configure Gemini
-    genai.configure(api_key=GOOGLE_API_KEY)
-    model = genai.GenerativeModel('gemini-2.0-flash')
+    api_key = os.environ.get("GOOGLE_API_KEY")
+    if not api_key:
+        from django.contrib import messages
+        messages.error(request, "Configuration Error: No Google API Key found. Please add GOOGLE_API_KEY to your environment variables.")
+        return redirect('dashboard')
+        
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel('gemini-1.5-flash')
 
     # 3. Create the Prompt
     prompt = f"""
@@ -125,9 +131,13 @@ def profile_analysis_view(request):
         profile = request.user.profile
         profile.ai_summary = response.text
         profile.save()
+        from django.contrib import messages
+        messages.success(request, "Leadership Profile generated successfully!")
     except Exception as e:
         print(f"Gemini Error: {e}")
-        # Ideally handle error gracefully
+        from django.contrib import messages
+        messages.error(request, f"Analysis Failed: {str(e)}")
+        # Allow retry
         pass
 
     return redirect('dashboard')
@@ -172,8 +182,12 @@ def chat_view(request):
                 context_data += f"Future Self: {s.future_self_answer}\n"
 
             # 2. Configure Gemini
-            genai.configure(api_key=GOOGLE_API_KEY)
-            model = genai.GenerativeModel('gemini-2.0-flash')
+            api_key = os.environ.get("GOOGLE_API_KEY")
+            if not api_key:
+                return JsonResponse({'reply': "System Error: Google API Key not configured."})
+
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-1.5-flash')
             
             # 3. Construct Prompt with Privacy Rules
             prompt = f"""

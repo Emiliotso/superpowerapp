@@ -288,6 +288,17 @@
 
 <body>
     <div class="container">
+        {% if messages %}
+        <div style="margin-bottom: 20px;">
+            {% for message in messages %}
+            <div style="padding: 15px; border-radius: 8px; margin-bottom: 10px; font-weight: 500; 
+                {% if message.tags == 'error' %}background: #fee2e2; color: #991b1b; border: 1px solid #f87171;{% endif %}
+                {% if message.tags == 'success' %}background: #d1fae5; color: #065f46; border: 1px solid #34d399;{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         <div class="header">
             <h1>Leadership Dashboard</h1>
             <a href="{% url 'account_logout' %}" class="logout">Sign Out</a>
