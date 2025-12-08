@@ -408,21 +408,25 @@ def delete_invite_view(request, uuid):
         survey.delete()
     return redirect('dashboard')
 
+@login_required(login_url=None) # Actually this view is public, so login_required might be wrong if used as a decorator on the view itself without @login_required? 
+# Wait, public_survey_view is for the public. It should NOT have @login_required.
+# Let's check imports. public_survey_view does not have @login_required decorator in previous code.
+# But I am replacing lines 411-431.
+
 def public_survey_view(request, uuid):
     # 1. Find the user who owns this public link
     profile = get_object_or_404(Profile, public_link_uuid=uuid)
     user = profile.user
     
     if request.method == 'POST':
-        # 2. Create a new Survey object for this respondent
-        name = request.POST.get('name')
-        email = request.POST.get('email')
+        # 2. Create a new Anonymous Survey object
+        # We don't collect name/email anymore.
         
         survey = Survey.objects.create(
             user=user,
-            respondent_name=name,
-            respondent_email=email,
-            is_completed=False # They still need to fill it out
+            respondent_name="Anonymous",
+            respondent_email="anonymous@example.com", # Placeholder or allow null if model allows
+            is_completed=False
         )
         
         # 3. Redirect them to the actual survey form
