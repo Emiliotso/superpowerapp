@@ -7,17 +7,27 @@ class Survey(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='surveys')
     
     # Respondent Info
-    respondent_name = models.CharField(max_length=255)
-    respondent_email = models.EmailField()
-    respondent_phone = models.CharField(max_length=50, blank=True)
+    # Removed name/email/phone as primary requirements
+    respondent_name = models.CharField(max_length=255, blank=True, null=True)
+    respondent_email = models.EmailField(blank=True, null=True)
+    respondent_phone = models.CharField(max_length=50, blank=True, null=True)
+    
+    RELATIONSHIP_CHOICES = [
+        ('friend', 'Friend'),
+        ('family', 'Family'),
+        ('coworker', 'Co-worker'),
+        ('manager', 'Manager'),
+        ('direct_report', 'Direct Report'),
+        ('other', 'Other'),
+    ]
+    relationship_type = models.CharField(max_length=50, choices=RELATIONSHIP_CHOICES, blank=True)
+    relationship_context = models.TextField(blank=True, verbose_name="How do you know them?")
     
     # Status
     is_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     # Answers
-    relationship_context = models.TextField(blank=True, verbose_name="How do you know them?")
-    
     # 1. The Energy Audit
     energy_audit_answer = models.TextField(blank=True, verbose_name="The Energy Audit")
     
@@ -30,8 +40,11 @@ class Survey(models.Model):
     # 4. The Future Self
     future_self_answer = models.TextField(blank=True, verbose_name="The Future Self")
 
+    # 5. Final Thoughts
+    final_thoughts = models.TextField(blank=True, verbose_name="Final Thoughts")
+    
     def __str__(self):
-        return f"Invite to {self.respondent_name} ({self.user.username})"
+        return f"Invite to {self.relationship_type or 'Anonymous'} ({self.user.username})"
 
 class SurveyFeedback(models.Model):
     survey = models.OneToOneField(Survey, on_delete=models.CASCADE, related_name='feedback')

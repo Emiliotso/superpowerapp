@@ -20,13 +20,15 @@ def survey_view(request, uuid):
 
     # 2. If POST, save answers
     if request.method == 'POST':
-        survey.relationship_context = request.POST.get('relationship', '')
+        survey.relationship_type = request.POST.get('relationship', '') # Correct field
+        # We can store the text description if 'Other' or just rely on the type.
+        # But wait, relationship_context was the old field. Let's start using relationship_type primarily.
+        
         survey.energy_audit_answer = request.POST.get('energy_audit', '')
         survey.stress_profile_answer = request.POST.get('stress_profile', '')
         survey.glass_ceiling_answer = request.POST.get('glass_ceiling', '')
         survey.future_self_answer = request.POST.get('future_self', '')
-        survey.is_completed = True
-        survey.save()
+        survey.final_thoughts = request.POST.get('final_thoughts', '')
         survey.is_completed = True
         survey.save()
         return render(request, 'thank_you.html', {'survey_uuid': survey.uuid})
@@ -38,7 +40,58 @@ def survey_view(request, uuid):
     return render(request, 'survey_form.html', {'survey': survey})
 
 # --- NEW GEMINI FUNCTION ---
-    return render(request, 'results.html', {'survey': survey})
+@login_required
+def get_alternative_question(request, uuid):
+    if request.method != 'POST':
+         return JsonResponse({'error': 'Invalid request method'}, status=400)
+         
+    try:
+        data = json.loads(request.body)
+        question_type = data.get('question_type')
+        relationship = data.get('relationship', 'acquaintance')
+        
+        survey = get_object_or_404(Survey, uuid=uuid)
+        target_user = survey.user
+        
+        # Configure Gemini
+        api_key = os.environ.get("GOOGLE_API_KEY")
+        if not api_key:
+            return JsonResponse({'error': 'API Key missing'}, status=500)
+            
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-2.5-flash')
+        
+        # Context for the specific question types to help AI generate a good alternative
+        context_map = {
+            'energy_audit': f"The original question asked about 'flow state' and competence vs genius.",
+            'stress_profile': f"The original question asked about their 'stress character' or shadow side.",
+            'glass_ceiling': f"The original question asked about a 'hard truth' or behavior limiting their potential.",
+            'future_self': f"The original question asked to imagine them 3 years from now as a leader."
+        }
+        
+        specific_context = context_map.get(question_type, "General leadership feedback.")
+        
+        prompt = f"""
+        Objective: Generate a SINGLE, simple, open-ended interview question for a respondent who knows the subject as a "{relationship}".
+        
+        Constraint: The respondent clicked "I'm not sure" on a deep psychological question about "{question_type}".
+        Context of original question: {specific_context}
+        
+        Task: Create a softer, broader, easier-to-answer alternative question that still gets at the same underlying insight but requires less specific observation.
+        
+        Example for 'Stress': 
+        - Hard: "Who do they turn into when threatened?"
+        - Easy: "When things get difficult at work, how do you typically see them react?"
+
+        Output ONLY the text of the new question. No quotes, no intro.
+        """
+        
+        response = model.generate_content(prompt)
+        return JsonResponse({'question': response.text.strip()})
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 
 def run_ai_analysis(profile_id, prompt, api_key):
     import time

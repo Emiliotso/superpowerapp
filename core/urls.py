@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('feedback/<uuid:uuid>/', views.survey_view, name='survey_view'),
     path('feedback/<uuid:uuid>/submit/', views.survey_feedback_view, name='survey_feedback'),
+    path('feedback/<uuid:uuid>/alternative/', views.get_alternative_question, name='get_alternative_question'),
     path('public/<uuid:uuid>/', views.public_survey_view, name='public_survey'),
     
     # Analysis & Chat

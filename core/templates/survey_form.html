@@ -113,7 +113,7 @@
 <body>
     <div class="container">
         <h1>Feedback for {{ survey.user.username }}</h1>
-        <p class="intro">Hi {{ survey.respondent_name }},<br>
+        <p class="intro">Hi,<br>
             {{ survey.user.username }} values your perspective. Your feedback will remain <strong>100%
                 anonymous</strong>. It will be aggregated with others to provide them with an insightful self-narrative
             and an actionable path forward.</p>
@@ -121,40 +121,172 @@
         <form method="post">
             {% csrf_token %}
 
+            <!-- Relationship Context -->
             <div class="form-group">
-                <label>1. The Energy Audit</label>
-                <p class="help-text">Everyone has to do things they actually hate doing. But what is the work that
+                <label>How do you know {{ survey.user.username }}?</label>
+                <select name="relationship" id="relationship" required
+                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; background: white;">
+                    <option value="" disabled selected>Select your relationship...</option>
+                    <option value="friend">Friend</option>
+                    <option value="family">Family</option>
+                    <option value="coworker">Co-worker</option>
+                    <option value="manager">Manager</option>
+                    <option value="direct_report">Direct Report</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <!-- Question 1 -->
+            <div class="form-group" id="group-energy_audit">
+                <label id="label-energy_audit">1. The Energy Audit</label>
+                <p class="help-text" id="help-energy_audit">Everyone has to do things they actually hate doing. But what
+                    is the work that
                     gives {{ survey.user.username }} <strong>energy</strong>? Describe a time you saw them in a state
                     of 'flow'—happiest, most effective, and seemingly effortless.</p>
                 <textarea name="energy_audit" rows="4" required></textarea>
+                <button type="button" class="alt-btn" onclick="getAlternative('energy_audit')">I'm not sure / Give me
+                    another question</button>
             </div>
 
-            <div class="form-group">
-                <label>2. The Stress Profile</label>
-                <p class="help-text">When {{ survey.user.username }} feels threatened, insecure, or deeply stressed,
+            <!-- Question 2 -->
+            <div class="form-group" id="group-stress_profile">
+                <label id="label-stress_profile">2. The Stress Profile</label>
+                <p class="help-text" id="help-stress_profile">When {{ survey.user.username }} feels threatened,
+                    insecure, or deeply stressed,
                     who do they 'turn into'? (e.g., Do they go quiet and vanish? Do they become aggressive and
                     controlling? Do they become chaotic?) Please describe that character.</p>
                 <textarea name="stress_profile" rows="4" required></textarea>
+                <button type="button" class="alt-btn" onclick="getAlternative('stress_profile')">I'm not sure / Give me
+                    another question</button>
             </div>
 
-            <div class="form-group">
-                <label>3. The Glass Ceiling</label>
-                <p class="help-text">If {{ survey.user.username }} fails to reach their full potential in the next 5
+            <!-- Question 3 -->
+            <div class="form-group" id="group-glass_ceiling">
+                <label id="label-glass_ceiling">3. The Glass Ceiling</label>
+                <p class="help-text" id="help-glass_ceiling">If {{ survey.user.username }} fails to reach their full
+                    potential in the next 5
                     years, what behavior or mindset will be the cause? What is the 'hard truth' they might not realize
                     about how they impact others?</p>
                 <textarea name="glass_ceiling" rows="4" required></textarea>
+                <button type="button" class="alt-btn" onclick="getAlternative('glass_ceiling')">I'm not sure / Give me
+                    another question</button>
             </div>
 
-            <div class="form-group">
-                <label>4. The Future Self</label>
-                <p class="help-text">Imagine {{ survey.user.username }} at their absolute best, 3 years from now. What
+            <!-- Question 4 -->
+            <div class="form-group" id="group-future_self">
+                <label id="label-future_self">4. The Future Self</label>
+                <p class="help-text" id="help-future_self">Imagine {{ survey.user.username }} at their absolute best, 3
+                    years from now. What
                     kind of leader or person have they become? What is the biggest change they made to get there?</p>
                 <textarea name="future_self" rows="4" required></textarea>
+                <button type="button" class="alt-btn" onclick="getAlternative('future_self')">I'm not sure / Give me
+                    another question</button>
             </div>
 
-            <button type="submit">Submit Feedback</button>
+            <!-- Final Thoughts -->
+            <div class="form-group">
+                <label>5. Anything Else?</label>
+                <p class="help-text">Is there anything else relevant that you think {{ survey.user.username }} should
+                    know?
+                    Please be as direct as possible. Don't worry about being polite—our system effectively "softens" and
+                    aggregates all feedback
+                    so they receive the insight without the sting.</p>
+                <textarea name="final_thoughts" rows="4"></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Feedback</button>
         </form>
     </div>
+
+    <style>
+        .alt-btn {
+            background: transparent;
+            color: #6b7280;
+            border: 1px dashed #d1d5db;
+            padding: 8px;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            width: auto;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .alt-btn:hover {
+            background: #f9fafb;
+            color: #374151;
+            border-color: #9ca3af;
+        }
+
+        .submit-btn {
+            margin-top: 30px;
+            width: 100%;
+            padding: 16px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: #1d4ed8;
+        }
+    </style>
+
+    <script>
+        async function getAlternative(questionType) {
+            const relationship = document.getElementById('relationship').value;
+            if (!relationship) {
+                alert("Please select how you know them first (at the top).");
+                document.getElementById('relationship').focus();
+                return;
+            }
+
+            const btn = document.querySelector(`#group-${questionType} .alt-btn`);
+            const helpText = document.getElementById(`help-${questionType}`);
+
+            // Loading state
+            const originalText = btn.textContent;
+            btn.textContent = "Generating new question...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch("{% url 'get_alternative_question' survey.uuid %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        question_type: questionType,
+                        relationship: relationship
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.question) {
+                    // Update the help text with the new question
+                    helpText.innerHTML = `<strong style="color: #2563eb;">New Question:</strong> ${data.question}`;
+                    // Hide the button since they swapped
+                    btn.style.display = 'none';
+                } else {
+                    alert("Could not generate a new question right now.");
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }
+
+            } catch (e) {
+                console.error(e);
+                alert("Error getting alternative question.");
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
 </body>
 
 </html>
