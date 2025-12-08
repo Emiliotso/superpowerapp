@@ -98,14 +98,18 @@
 <body>
     <div class="container">
         <h1>Give Feedback to {{ user.username }}</h1>
-        <p>You have been invited to provide <strong>100% anonymous</strong> feedback to help {{ user.username }} grow as
-            a leader.</p>
-        <p>Your name and email will <strong>not</strong> be collected. Click below to start.</p>
+        <p>You have been invited to provide feedback to help {{ user.username }} grow as a leader. Please enter your
+            details to get started.</p>
 
         <form method="post">
             {% csrf_token %}
-            <!-- No inputs needed, just the start button -->
-            <button type="submit">Start Anonymous Survey</button>
+            <label>Your Name</label>
+            <input type="text" name="name" required placeholder="e.g. Jane Doe">
+
+            <label>Your Email</label>
+            <input type="email" name="email" required placeholder="jane@example.com">
+
+            <button type="submit">Start Survey</button>
         </form>
     </div>
 </body>
