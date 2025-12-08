@@ -144,8 +144,16 @@ def profile_analysis_view(request):
         import traceback
         traceback.print_exc()
         
+        # Debug: List available models to see what the key can access
+        debug_info = ""
+        try:
+            available = [m.name for m in genai.list_models()]
+            debug_info = f" | Visible Models: {available}"
+        except Exception as x:
+            debug_info = f" | Could not list models: {x}"
+        
         from django.contrib import messages
-        messages.error(request, f"Analysis Failed: {str(e)}")
+        messages.error(request, f"Analysis Failed: {str(e)}{debug_info}")
         # Don't just pass, we want to know.
         pass
 
