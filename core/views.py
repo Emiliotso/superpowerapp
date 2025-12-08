@@ -87,7 +87,7 @@ def profile_analysis_view(request):
         return redirect('dashboard')
         
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('gemini-2.0-flash')
 
     # 3. Create the Prompt
     prompt = f"""
@@ -204,7 +204,7 @@ def chat_view(request):
                 return JsonResponse({'reply': "System Error: Google API Key not configured."})
 
             genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-pro')
+            model = genai.GenerativeModel('gemini-2.0-flash')
             
             # 3. Construct Prompt with Privacy Rules
             prompt = f"""
