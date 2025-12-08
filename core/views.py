@@ -144,12 +144,20 @@ def profile_analysis_view(request):
     # 4. Ask Gemini
     try:
         print(f"DEBUG: Attempting to generate profile for {request.user.email}")
-        response = model.generate_content(prompt)
+        
+        # Stream response to check for life
+        response_stream = model.generate_content(prompt, stream=True)
+        
+        full_text = ""
+        for chunk in response_stream:
+            if chunk.text:
+                full_text += chunk.text
+        
         print("DEBUG: Gemini response received.")
         
         # 5. Save to Profile
         profile = request.user.profile
-        profile.ai_summary = response.text
+        profile.ai_summary = full_text
         profile.save()
         
         from django.contrib import messages
