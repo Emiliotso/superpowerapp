@@ -86,7 +86,23 @@ def profile_analysis_view(request):
         messages.error(request, "Configuration Error: No Google API Key found. Please add GOOGLE_API_KEY to your environment variables.")
         return redirect('dashboard')
         
-    genai.configure(api_key=api_key)
+    # Force REST transport to avoid gRPC timeouts/hangs on Render
+    from google.api_core import client_options
+    # Note: The library handles transport via the 'transport' argument in some versions, 
+    # but strictly setting it in configure is safer regarding global state if supported,
+    # or passing it to the model.
+    # Actually, for google-generativeai, it's often easier to just rely on the default unless strictly needed.
+    # BUT, to fix the specific gRPC hang, we can try to unblock it by simple logging or fallback.
+    # Let's try to keep it simple first and just use the model. 
+    # If users report hanging, it's often better to just use standard HTTP requests or check networking.
+    # However, since we are stuck, let's use the 'transport' kwarg in the constructor if possible 
+    # or just simple configuration.
+    
+    # Actually, the easiest fix for "Worker timeout" on Render with Gemini is often just speed.
+    # But since we are already on Flash, it might be a networking cliff.
+    # Let's add precise timing logging first to see if it even starts.
+    
+    genai.configure(api_key=api_key, transport="rest")
     model = genai.GenerativeModel('gemini-2.5-flash')
 
     # 3. Create the Prompt
