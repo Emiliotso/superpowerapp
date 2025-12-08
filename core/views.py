@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from .models import Survey, Profile, SurveyFeedback
 import google.generativeai as genai
+import os
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.conf import settings
