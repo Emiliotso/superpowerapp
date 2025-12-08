@@ -40,6 +40,38 @@ def survey_view(request, uuid):
 # --- NEW GEMINI FUNCTION ---
     return render(request, 'results.html', {'survey': survey})
 
+def run_ai_analysis(profile_id, prompt, api_key):
+    import time
+    try:
+        # Re-fetch profile to avoid stale data (and ensure thread-safety)
+        from .models import Profile
+        profile = Profile.objects.get(id=profile_id)
+        
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-2.5-flash')
+        
+        # Stream response (standard practice for long gens)
+        response_stream = model.generate_content(prompt, stream=True)
+        
+        full_text = ""
+        for chunk in response_stream:
+            if chunk.text:
+                full_text += chunk.text
+        
+        profile.ai_summary = full_text
+        profile.save()
+        print(f"BACKGROUND DEBUG: Analysis saved for Profile {profile_id}")
+        
+    except Exception as e:
+        print(f"BACKGROUND ERROR: {e}")
+        try:
+             from .models import Profile
+             profile = Profile.objects.get(id=profile_id)
+             profile.ai_summary = f"Error during analysis: {str(e)}. Please try again."
+             profile.save()
+        except:
+            pass
+
 @login_required
 def profile_analysis_view(request):
     # 1. Gather ALL completed surveys for this user
@@ -48,14 +80,13 @@ def profile_analysis_view(request):
     if not completed_surveys:
         return redirect('dashboard')
         
-    # Aggregate text from the 3 specific questions
-    text_data = ""
-    
-    # Add User Context
+    # Aggregate text
     try:
         profile = request.user.profile
     except Profile.DoesNotExist:
         profile = Profile.objects.create(user=request.user)
+
+    text_data = ""
     text_data += f"\n--- USER CONTEXT ---\n"
     text_data += f"Role: {profile.current_role}\n"
     text_data += f"Responsibilities: {profile.responsibilities}\n"
@@ -79,33 +110,14 @@ def profile_analysis_view(request):
         text_data += f"Glass Ceiling: {s.glass_ceiling_answer}\n"
         text_data += f"Future Self: {s.future_self_answer}\n"
 
-    # 2. Configure Gemini
+    # Check API Key
     api_key = os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         from django.contrib import messages
-        messages.error(request, "Configuration Error: No Google API Key found. Please add GOOGLE_API_KEY to your environment variables.")
+        messages.error(request, "Configuration Error: No Google API Key found.")
         return redirect('dashboard')
-        
-    # Force REST transport to avoid gRPC timeouts/hangs on Render
-    from google.api_core import client_options
-    # Note: The library handles transport via the 'transport' argument in some versions, 
-    # but strictly setting it in configure is safer regarding global state if supported,
-    # or passing it to the model.
-    # Actually, for google-generativeai, it's often easier to just rely on the default unless strictly needed.
-    # BUT, to fix the specific gRPC hang, we can try to unblock it by simple logging or fallback.
-    # Let's try to keep it simple first and just use the model. 
-    # If users report hanging, it's often better to just use standard HTTP requests or check networking.
-    # However, since we are stuck, let's use the 'transport' kwarg in the constructor if possible 
-    # or just simple configuration.
-    
-    # Actually, the easiest fix for "Worker timeout" on Render with Gemini is often just speed.
-    # But since we are already on Flash, it might be a networking cliff.
-    # Let's add precise timing logging first to see if it even starts.
-    
-    genai.configure(api_key=api_key, transport="rest")
-    model = genai.GenerativeModel('gemini-2.5-flash')
 
-    # 3. Create the Prompt
+    # Construct Prompt
     prompt = f"""
     Role: You are an expert developmental psychologist and executive coach, fluent in the Enneagram, Internal Family Systems (IFS), The 6 Types of Working Genius, and Vertical Leadership Development.
     
@@ -141,45 +153,17 @@ def profile_analysis_view(request):
         * Local: If the user's location is known, suggest a specific local venue/vendor. If unknown, suggest how to find the best local option.
     """
 
-    # 4. Ask Gemini
-    try:
-        print(f"DEBUG: Attempting to generate profile for {request.user.email}")
-        
-        # Stream response to check for life
-        response_stream = model.generate_content(prompt, stream=True)
-        
-        full_text = ""
-        for chunk in response_stream:
-            if chunk.text:
-                full_text += chunk.text
-        
-        print("DEBUG: Gemini response received.")
-        
-        # 5. Save to Profile
-        profile = request.user.profile
-        profile.ai_summary = full_text
-        profile.save()
-        
-        from django.contrib import messages
-        messages.success(request, "Leadership Profile generated successfully!")
-        
-    except Exception as e:
-        print(f"CRITICAL GEMINI ERROR: {e}")
-        import traceback
-        traceback.print_exc()
-        
-        # Debug: List available models to see what the key can access
-        debug_info = ""
-        try:
-            available = [m.name for m in genai.list_models()]
-            debug_info = f" | Visible Models: {available}"
-        except Exception as x:
-            debug_info = f" | Could not list models: {x}"
-        
-        from django.contrib import messages
-        messages.error(request, f"Analysis Failed: {str(e)}{debug_info}")
-        # Don't just pass, we want to know.
-        pass
+    # Set Status Marker
+    profile.ai_summary = "__ANALYZING__"
+    profile.save()
+
+    # Launch Background Thread
+    import threading
+    t = threading.Thread(target=run_ai_analysis, args=(profile.id, prompt, api_key))
+    t.start()
+    
+    from django.contrib import messages
+    messages.success(request, "Analysis started! This may take 30-60 seconds. We'll update this page when it's ready.")
 
     return redirect('dashboard')
 

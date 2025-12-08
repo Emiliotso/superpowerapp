@@ -291,7 +291,8 @@
         {% if messages %}
         <div style="margin-bottom: 20px;">
             {% for message in messages %}
-            <div style="padding: 15px; border-radius: 8px; margin-bottom: 10px; font-weight: 500; 
+            <div
+                style="padding: 15px; border-radius: 8px; margin-bottom: 10px; font-weight: 500; 
                 {% if message.tags == 'error' %}background: #fee2e2; color: #991b1b; border: 1px solid #f87171;{% endif %}
                 {% if message.tags == 'success' %}background: #d1fae5; color: #065f46; border: 1px solid #34d399;{% endif %}">
                 {{ message }}
@@ -311,8 +312,22 @@
             <div id="reportContainer" class="report-container">
                 <div class="report-content">
                     <h2>Your Leadership Profile</h2>
-                    {% if profile.ai_summary %}
-                    <div class="ai-text">{{ profile.ai_summary }}</div>
+                    {% if profile.ai_summary == "__ANALYZING__" %}
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">🧠</div>
+                        <h3 style="color: #111827;">Analyzing your data...</h3>
+                        <p style="color: #6b7280;">Our AI psychologist is synthesizing your feedback. This takes about
+                            30-60 seconds.</p>
+                        <div style="margin-top: 20px; font-weight: 600; color: #2563eb;">Please wait... page will
+                            refresh automatically.</div>
+                        <script>
+                                setTimeout(function(){
+                                    window.location.reload();
+                                }, 5000); 
+                        </script>
+                    </div>
+                    {% elif profile.ai_summary %}
+                    <div class="ai-text">{{ profile.ai_summary|linebreaksbr }}</div>
                     <p
                         style="color: #9ca3af; font-size: 0.8rem; margin-top: 30px; border-top: 1px solid #f3f4f6; padding-top: 10px;">
                         Last updated: {{ profile.last_updated }} •
