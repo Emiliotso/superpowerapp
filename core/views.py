@@ -126,18 +126,26 @@ def profile_analysis_view(request):
 
     # 4. Ask Gemini
     try:
+        print(f"DEBUG: Attempting to generate profile for {request.user.email}")
         response = model.generate_content(prompt)
+        print("DEBUG: Gemini response received.")
+        
         # 5. Save to Profile
         profile = request.user.profile
         profile.ai_summary = response.text
         profile.save()
+        
         from django.contrib import messages
         messages.success(request, "Leadership Profile generated successfully!")
+        
     except Exception as e:
-        print(f"Gemini Error: {e}")
+        print(f"CRITICAL GEMINI ERROR: {e}")
+        import traceback
+        traceback.print_exc()
+        
         from django.contrib import messages
         messages.error(request, f"Analysis Failed: {str(e)}")
-        # Allow retry
+        # Don't just pass, we want to know.
         pass
 
     return redirect('dashboard')
